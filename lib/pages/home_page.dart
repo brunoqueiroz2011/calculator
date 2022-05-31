@@ -12,7 +12,7 @@ class _HomePageState extends State<HomePage> {
   String equation = "";
   String currentValue = "0";
   String auxValue = "";
-  String auxEquation = "";
+  var auxEquation = [];
 
   void incrementValue(String value) {
     setState(() {
@@ -199,19 +199,34 @@ class _HomePageState extends State<HomePage> {
                                 borderRadius: BorderRadius.circular(0.0)),
                           ),
                           onPressed: () {
-                            incrementEquation(currentValue);
-                            auxEquation = equation.trim();
                             double result = 0;
-                            auxEquation.split("+");
-                            auxEquation.split(" ");                      
-                            for (var i = 0; i < auxEquation.length; i++) {
-                              if(auxEquation[i] != " " && auxEquation[i] != "+"){
-                                result += double.parse(auxEquation[i]);
+                            incrementEquation(currentValue);
+                            if (equation.trim().contains("+")) {
+                              auxEquation = equation.trim().split("+");
+                            }else if (equation.trim().contains("-")) {
+                              auxEquation = equation.trim().split("-");
+                            }else if (equation.trim().contains("*")) {
+                              auxEquation = equation.trim().split("*");
+                            }else if (equation.trim().contains("/")) {
+                              auxEquation = equation.trim().split("/");
+                            }                                                        
+                            result = double.parse(auxEquation[0].toString().isNotEmpty ? auxEquation[0] : 0);
+                            for (var i = 1; i < auxEquation.length; i++) {
+                              if(auxEquation[i].toString().isNotEmpty){
+                                if (equation.trim().contains("+")) {
+                                  result += double.parse(auxEquation[i]);
+                                }else if (equation.trim().contains("-")) {
+                                  result -= double.parse(auxEquation[i]);
+                                }else if (equation.trim().contains("*")) {
+                                  result *= double.parse(auxEquation[i]);
+                                }else if (equation.trim().contains("/")) {
+                                  result /= double.parse(auxEquation[i]);
+                                }                                
                               }
                             }
-                            auxEquation = "";
+                            auxEquation = [];
                             auxValue = "";
-                            incrementValue(result.truncate().toString());                            
+                            incrementValue(result.toString());                            
                           },
                         ),
                       )
@@ -270,7 +285,7 @@ class _HomePageState extends State<HomePage> {
               break;
             case 'C':
               auxValue = "";
-              auxEquation = "";
+              auxEquation = [];
               incrementEquation("");
               incrementValue("0");
               break;
